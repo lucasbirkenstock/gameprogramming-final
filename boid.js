@@ -1,8 +1,3 @@
-// Flocking
-// Daniel Shiffman
-// https://thecodingtrain.com/CodingChallenges/124-flocking-boids.html
-// https://youtu.be/mhjuuHl6qHM
-
 class Boid {
     constructor() {
       this.position = createVector(random(width), random(height));
@@ -111,9 +106,11 @@ class Boid {
     }
   
     show() {
-      strokeWeight(6);
-      stroke(255);
-      point(this.position.x, this.position.y);
+      push();
+      translate(this.position.x, this.position.y);
+      rotate(atan2(this.velocity.y, this.velocity.x));
+      image(tenderBudSprite, -spriteWidth / 2, -spriteHeight / 2, spriteWidth, spriteHeight);
+      pop();
     }
   }
   

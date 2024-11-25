@@ -2,6 +2,16 @@ const flock = [];
 
 let alignSlider, cohesionSlider, separationSlider;
 
+// Global variables for sprite and dimensions
+let tenderBudSprite;
+let spriteWidth = 50; // Adjust dimensions to match the sprite
+let spriteHeight = 50;
+
+// Preload function to load assets before the sketch starts
+function preload() {
+  tenderBudSprite = loadImage('TenderBud/idle/0.png'); 
+}
+
 function setup() {
   createCanvas(600, 400);
   alignSlider = createSlider(0, 2, 1.5, 0.1);
