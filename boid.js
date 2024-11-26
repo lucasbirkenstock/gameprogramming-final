@@ -6,19 +6,30 @@ class Boid {
       this.acceleration = createVector();
       this.maxForce = 0.2;
       this.maxSpeed = 5;
+
+      // Animation frames
+      this.frames = [];
+      this.currentFrame = 0;
+      this.frameDelay = 5;
+      this.frameCounter = 0;
+      this.spriteWidth = 50;
+      this.spriteHeight = 50;
+    }
+
+    loadFrames(animationPath, frameCount)
+    {
+        for (let i = 0; i < frameCount; i++)
+        {
+            this.frames.push(loadImage(`${animationPath}/${i}.png`))
+        }
     }
   
-    edges() {
-      if (this.position.x > width) {
-        this.position.x = 0;
-      } else if (this.position.x < 0) {
-        this.position.x = width;
-      }
-      if (this.position.y > height) {
-        this.position.y = 0;
-      } else if (this.position.y < 0) {
-        this.position.y = height;
-      }
+    edges() 
+    {
+        if (this.position.x > width) this.position.x = 0;
+        else if (this.position.x < 0) this.position.x = width;
+        if (this.position.y > height) this.position.y = 0;
+        else if (this.position.y < 0) this.position.y = height;
     }
   
     align(boids) {
@@ -84,33 +95,54 @@ class Boid {
       return steering;
     }
   
-    flock(boids) {
-      let alignment = this.align(boids);
-      let cohesion = this.cohesion(boids);
-      let separation = this.separation(boids);
-  
-      alignment.mult(alignSlider.value());
-      cohesion.mult(cohesionSlider.value());
-      separation.mult(separationSlider.value());
-  
-      this.acceleration.add(alignment);
-      this.acceleration.add(cohesion);
-      this.acceleration.add(separation);
+    flock(boids) 
+    {
+        let alignment = this.align(boids);
+        let cohesion = this.cohesion(boids);
+        let separation = this.separation(boids);
+    
+        alignment.mult(alignSlider.value());
+        cohesion.mult(cohesionSlider.value());
+        separation.mult(separationSlider.value());
+    
+        this.acceleration.add(alignment);
+        this.acceleration.add(cohesion);
+        this.acceleration.add(separation);
     }
   
-    update() {
-      this.position.add(this.velocity);
-      this.velocity.add(this.acceleration);
-      this.velocity.limit(this.maxSpeed);
-      this.acceleration.mult(0);
+    update() 
+    {
+        this.position.add(this.velocity);
+        this.velocity.add(this.acceleration);
+        this.velocity.limit(this.maxSpeed);
+        this.acceleration.mult(0);
+    
+        // Update frame for animation
+        this.frameCounter++;
+        if (this.frameCounter >= this.frameDelay) 
+        {
+          this.currentFrame = (this.currentFrame + 1) % this.frames.length;
+          this.frameCounter = 0;
+        }
     }
   
-    show() {
-      push();
-      translate(this.position.x, this.position.y);
-      rotate(atan2(this.velocity.y, this.velocity.x));
-      image(tenderBudSprite, -spriteWidth / 2, -spriteHeight / 2, spriteWidth, spriteHeight);
-      pop();
+    show() 
+    {
+        push();
+        translate(this.position.x, this.position.y);
+        rotate(this.velocity.heading());
+        
+        if (this.frames.length > 0) 
+        {
+          image(
+            this.frames[this.currentFrame],
+            -this.spriteWidth / 2,
+            -this.spriteHeight / 2,
+            this.spriteWidth,
+            this.spriteHeight
+          );
+        }
+        pop();
     }
   }
   
