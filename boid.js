@@ -1,5 +1,7 @@
-class Boid {
-  constructor() {
+class Boid 
+{
+  constructor() 
+  {
       this.position = createVector(random(width), random(height));
       this.velocity = p5.Vector.random2D();
       this.velocity.setMag(random(2, 4));
@@ -8,8 +10,8 @@ class Boid {
       this.maxSpeed = 5;
       this.angle = this.velocity.heading();
 
-      // Animation frames for cardinal and intercardinal directions
-      this.animations = {
+      this.animations = 
+      {
           north: [],
           northeast: [],
           east: [],
@@ -19,6 +21,7 @@ class Boid {
           west: [],
           northwest: []
       };
+
       this.currentAnimation = this.animations.south; // Default animation
       this.currentFrame = 0;
       this.frameDelay = 5;
@@ -27,41 +30,62 @@ class Boid {
       this.spriteHeight = 50;
   }
 
-  loadFrames(direction, animationPath, frameCount) {
+  loadFrames(direction, animationPath, frameCount) 
+  {
       // Loads frames for a specific direction
-      if (!this.animations[direction]) {
+      if (!this.animations[direction]) 
+      {
           console.error(`Invalid direction: ${direction}`);
           return;
       }
-      for (let i = 0; i < frameCount; i++) {
+
+      for (let i = 0; i < frameCount; i++) 
+      {
           this.animations[direction].push(loadImage(`${animationPath}/${i}.png`));
       }
   }
 
-  determineDirection() {
+  determineDirection() 
+  {
       // Determine the direction based on the angle
       const angle = this.angle;
 
-      if (angle > -PI / 8 && angle <= PI / 8) {
+      if (angle > -PI / 8 && angle <= PI / 8) 
+      {
           return "east";
-      } else if (angle > PI / 8 && angle <= (3 * PI) / 8) {
+      } 
+      else if (angle > PI / 8 && angle <= (3 * PI) / 8) 
+      {
           return "southeast";
-      } else if (angle > (3 * PI) / 8 && angle <= (5 * PI) / 8) {
+      } 
+      else if (angle > (3 * PI) / 8 && angle <= (5 * PI) / 8) 
+      {
           return "south";
-      } else if (angle > (5 * PI) / 8 && angle <= (7 * PI) / 8) {
+      } 
+      else if (angle > (5 * PI) / 8 && angle <= (7 * PI) / 8) 
+      {
           return "southwest";
-      } else if (angle > (7 * PI) / 8 || angle <= -(7 * PI) / 8) {
+      } 
+      else if (angle > (7 * PI) / 8 || angle <= -(7 * PI) / 8) 
+      {
           return "west";
-      } else if (angle > -(7 * PI) / 8 && angle <= -(5 * PI) / 8) {
+      } 
+      else if (angle > -(7 * PI) / 8 && angle <= -(5 * PI) / 8) 
+      {
           return "northwest";
-      } else if (angle > -(5 * PI) / 8 && angle <= -(3 * PI) / 8) {
+      } 
+      else if (angle > -(5 * PI) / 8 && angle <= -(3 * PI) / 8) 
+      {
           return "north";
-      } else if (angle > -(3 * PI) / 8 && angle <= -PI / 8) {
+      } 
+      else if (angle > -(3 * PI) / 8 && angle <= -PI / 8) 
+      {
           return "northeast";
       }
   }
 
-  update() {
+  update() 
+  {
       this.position.add(this.velocity);
       this.velocity.add(this.acceleration);
       this.velocity.limit(this.maxSpeed);
@@ -76,28 +100,31 @@ class Boid {
 
       // Update frame for animation
       this.frameCounter++;
-      if (this.frameCounter >= this.frameDelay) {
+      if (this.frameCounter >= this.frameDelay) 
+      {
           this.currentFrame = (this.currentFrame + 1) % this.currentAnimation.length;
           this.frameCounter = 0;
       }
   }
 
-  show() {
-      push();
-      translate(this.position.x, this.position.y);
-      rotate(this.angle);
+  show() 
+  {
+    push();
+    translate(this.position.x, this.position.y);
 
-      if (this.currentAnimation.length > 0) {
-          image(
-              this.currentAnimation[this.currentFrame],
-              -this.spriteWidth / 2,
-              -this.spriteHeight / 2,
-              this.spriteWidth,
-              this.spriteHeight
-          );
-      }
-      pop();
-  }
+    if (this.currentAnimation.length > 0) 
+    {
+        image(
+            this.currentAnimation[this.currentFrame],
+            -this.spriteWidth / 2,
+            -this.spriteHeight / 2,
+            this.spriteWidth,
+            this.spriteHeight
+        );
+    }
+    pop();
+}
+
 
   edges() 
     {
@@ -137,18 +164,22 @@ class Boid {
         this.acceleration.add(separation);
     }
 
-    align(boids) {
+    align(boids) 
+    {
       let perceptionRadius = 25;
       let steering = createVector();
       let total = 0;
-      for (let other of boids) {
+      for (let other of boids) 
+      {
         let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-        if (other != this && d < perceptionRadius) {
+        if (other != this && d < perceptionRadius) 
+        {
           steering.add(other.velocity);
           total++;
         }
       }
-      if (total > 0) {
+      if (total > 0) 
+      {
         steering.div(total);
         steering.setMag(this.maxSpeed);
         steering.sub(this.velocity);
@@ -157,46 +188,60 @@ class Boid {
       return steering;
     }
   
-    separation(boids) {
+    separation(boids)
+    {
       let perceptionRadius = 24;
       let steering = createVector();
       let total = 0;
-      for (let other of boids) {
+      for (let other of boids) 
+      {
         let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-        if (other != this && d < perceptionRadius) {
+
+        if (other != this && d < perceptionRadius) 
+        {
           let diff = p5.Vector.sub(this.position, other.position);
           diff.div(d * d);
           steering.add(diff);
           total++;
         }
       }
-      if (total > 0) {
+
+      if (total > 0) 
+      {
         steering.div(total);
         steering.setMag(this.maxSpeed);
         steering.sub(this.velocity);
         steering.limit(this.maxForce);
       }
+
       return steering;
     }
   
-    cohesion(boids) {
+    cohesion(boids) 
+    {
       let perceptionRadius = 50;
       let steering = createVector();
       let total = 0;
-      for (let other of boids) {
+      for (let other of boids) 
+      {
         let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-        if (other != this && d < perceptionRadius) {
+        
+        if (other != this && d < perceptionRadius) 
+        {
           steering.add(other.position);
           total++;
         }
       }
-      if (total > 0) {
+
+      if (total > 0) 
+      {
         steering.div(total);
         steering.sub(this.position);
         steering.setMag(this.maxSpeed);
         steering.sub(this.velocity);
         steering.limit(this.maxForce);
       }
+      
       return steering;
     }
 }
