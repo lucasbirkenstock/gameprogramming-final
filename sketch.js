@@ -3,7 +3,7 @@ let alignSlider, cohesionSlider, separationSlider;
 
 // Preload animation frames
 function preload() {
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 100; i++) {
     let boid = new Boid();
     boid.loadFrames('TenderBud/walk_S', 4); // Adjust path and frame count
     flock.push(boid);
