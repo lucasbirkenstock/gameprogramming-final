@@ -10,6 +10,7 @@ class Boid
       this.maxSpeed = 5;
       this.angle = this.velocity.heading();
 
+
       this.animations = 
       {
           north: [],
@@ -93,7 +94,7 @@ class Boid
 
       // Update the angle based on the velocity
       this.angle = this.velocity.heading();
-
+      
       // Determine the current direction and switch animation frames
       const direction = this.determineDirection();
       this.currentAnimation = this.animations[direction];
@@ -139,6 +140,9 @@ class Boid
         let alignment = this.align(boids);
         let cohesion = this.cohesion(boids);
         let separation = this.separation(boids);
+        
+        let collision = this.collision(boids);
+        
     
         alignment.mult(alignSlider.value());
         cohesion.mult(cohesionSlider.value());
@@ -147,26 +151,12 @@ class Boid
         this.acceleration.add(alignment);
         this.acceleration.add(cohesion);
         this.acceleration.add(separation);
-    }
 
-    flock(boids) 
-    {
-        let alignment = this.align(boids);
-        let cohesion = this.cohesion(boids);
-        let separation = this.separation(boids);
-    
-        alignment.mult(alignSlider.value());
-        cohesion.mult(cohesionSlider.value());
-        separation.mult(separationSlider.value());
-    
-        this.acceleration.add(alignment);
-        this.acceleration.add(cohesion);
-        this.acceleration.add(separation);
     }
 
     align(boids) 
     {
-      let perceptionRadius = 25;
+      let perceptionRadius = 25*radiusSlider.value();
       let steering = createVector();
       let total = 0;
       for (let other of boids) 
@@ -190,7 +180,7 @@ class Boid
   
     separation(boids)
     {
-      let perceptionRadius = 24;
+      let perceptionRadius = 25*radiusSlider.value();
       let steering = createVector();
       let total = 0;
       for (let other of boids) 
@@ -219,7 +209,7 @@ class Boid
   
     cohesion(boids) 
     {
-      let perceptionRadius = 50;
+      let perceptionRadius = 50*radiusSlider.value();
       let steering = createVector();
       let total = 0;
       for (let other of boids) 
@@ -244,5 +234,43 @@ class Boid
       
       return steering;
     }
+
+    getRandomInt(min, max) {
+      const minCeiled = Math.ceil(min);
+      const maxFloored = Math.floor(max);
+      return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
+    }
+
+    collision(boids) {
+      let collisionDistance = 20*collisionSlider.value();
+      if(x.checked){
+        ellipse(this.position.x, this.position.y, collisionDistance * 2);
+      }
+      
+      for (let other of boids) {
+          if (other != this) {
+              let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+              if (d < collisionDistance) 
+                {
+                  let normal = p5.Vector.sub(this.position, other.position);
+                  normal.normalize();
+                  let relativeVelocity = p5.Vector.sub(this.velocity, other.velocity);
+                  let velocityAlongNormal = relativeVelocity.dot(normal);
+                  if (velocityAlongNormal <= 0) {
+                    let bounceForce = 2*velocityAlongNormal; //can change this number if the bounce is too large
+                    this.velocity.sub(normal.copy().mult(bounceForce));
+                    other.velocity.add(normal.copy().mult(bounceForce));
+                  }
+                  // Stops the penguins from bumping into each other
+                  let overlap = collisionDistance - d;
+                  this.position.add(normal.copy().mult(overlap / 2));
+                  other.position.add(normal.copy().mult(-overlap / 2));
+                }
+               
+             
+          }
+      }
+  }
+  
 }
 
