@@ -1,4 +1,4 @@
-let flock = [];
+let flock = []; // Array of boids
 let alignSlider, cohesionSlider, separationSlider, radiusSlider, collisionSlider, showCollisionRad;
 
 // Preload animation frames
@@ -8,13 +8,10 @@ function preload()
   {
     let boid = new Boid();
 
-    // Load frames for cardinal directions
         boid.loadFrames('north', 'TenderBud/walk_N', 4);
         boid.loadFrames('south', 'TenderBud/walk_S', 4);
         boid.loadFrames('east', 'TenderBud/walk_E', 4);
         boid.loadFrames('west', 'TenderBud/walk_W', 4);
-
-        // Load frames for intercardinal directions
         boid.loadFrames('northeast', 'TenderBud/walk_NE', 4);
         boid.loadFrames('southeast', 'TenderBud/walk_SE', 4);
         boid.loadFrames('southwest', 'TenderBud/walk_SW', 4);
@@ -23,11 +20,13 @@ function preload()
   }
 }
 
-function setup() {
+function setup() 
+{
   createCanvas(800, 600);
 
   widthOfLabel = 280;
 
+  // Sliders for everything modifiable
   alignSlider = createSlider(0, 2, 1.5, 0.1);
   alignSlider.position(20, height + 20); 
   let alignLabel = createDiv('Alignment');
@@ -53,6 +52,7 @@ function setup() {
   let collisionLabel = createDiv('Collision Radius');
   collisionLabel.position(collisionSlider.x + collisionSlider.width + 10, collisionSlider.y);
 
+  // Checkbox for whether the colission circle is shown or not
   window.x = document.createElement("INPUT");
   x.setAttribute("type", "checkbox");
   x.style.position = "absolute"; 
@@ -66,6 +66,7 @@ function setup() {
 function draw() 
 {
   background(0);
+  // For every boid, call its following member functions, which all together produce boid behavior: 
   for (let boid of flock) 
   {
     boid.edges();

@@ -85,6 +85,7 @@ class Boid
       }
   }
 
+  // Update boid's position, velocity, direction, animation frame
   update() 
   {
       this.position.add(this.velocity);
@@ -108,6 +109,7 @@ class Boid
       }
   }
 
+  // Draw boid on canvas
   show() 
   {
     push();
@@ -126,7 +128,7 @@ class Boid
     pop();
 }
 
-
+  // Have the boid go to the other end of the screen if it moves past the boundaries
   edges() 
     {
         if (this.position.x > width) this.position.x = 0;
@@ -135,6 +137,7 @@ class Boid
         else if (this.position.y < 0) this.position.y = height;
     }
 
+    // Produce alignment, cohesion, separation behavior in boids
     flock(boids) 
     {
         let alignment = this.align(boids);
@@ -154,6 +157,7 @@ class Boid
 
     }
 
+    // Align boid's velocity to average velocity of nearby boids inside its perception radius
     align(boids) 
     {
       let perceptionRadius = 25*radiusSlider.value();
@@ -178,6 +182,7 @@ class Boid
       return steering;
     }
   
+    // Steer boid away from nearby boids so that they don't collide
     separation(boids)
     {
       let perceptionRadius = 25*radiusSlider.value();
@@ -206,12 +211,14 @@ class Boid
 
       return steering;
     }
-  
+    
+    // Steer boid towards average position of nearby boids
     cohesion(boids) 
     {
       let perceptionRadius = 50*radiusSlider.value();
       let steering = createVector();
       let total = 0;
+
       for (let other of boids) 
       {
         let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
@@ -235,39 +242,59 @@ class Boid
       return steering;
     }
 
-    getRandomInt(min, max) {
+    getRandomInt(min, max) 
+    {
       const minCeiled = Math.ceil(min);
       const maxFloored = Math.floor(max);
-      return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
+      return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); 
     }
 
-    collision(boids) {
+    // Visual notification of interaction: when boids collide, make them bounce off each other into different directions
+    collision(boids) 
+    {
       let collisionDistance = 20*collisionSlider.value();
-      if(x.checked){
+
+      if(x.checked)
+      {
         ellipse(this.position.x, this.position.y, collisionDistance * 2);
       }
       
-      for (let other of boids) {
-          if (other != this) {
+      for (let other of boids) 
+      {
+          // Don't let boid collide with itself
+          if (other != this) 
+          {
               let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+
+              // If another boid is within the collision range:
               if (d < collisionDistance) 
                 {
+                  // Get a vector pointing from boid 1 to boid 2, convert it to a unit vector
                   let normal = p5.Vector.sub(this.position, other.position);
                   normal.normalize();
+
+                  // Subtract the two velocities so we can see how the boids are moving in relation to eachother instead of just absolute movement 
                   let relativeVelocity = p5.Vector.sub(this.velocity, other.velocity);
-                  let velocityAlongNormal = relativeVelocity.dot(normal);
-                  if (velocityAlongNormal <= 0) {
-                    let bounceForce = 2*velocityAlongNormal; //can change this number if the bounce is too large
+
+                  // Project velocity difference onto the vector pointing from boid 1 to boid 2
+                  // Obviously not the full projection equation, don't need it because using unit vector. Vector u = 1, essentially multiply 1 by itself several times, not including for simplicity
+                  let velocityDifferenceProjectedOnNormal = relativeVelocity.dot(normal);
+                  
+                  // by projecting the velocity difference onto the normal vector, basically asking "how much of the velocity difference is pointing in the direction of the normal vector"
+                  // order of normal vector subtraction doesn't matter because dot(a,b) = dot(b,a)
+                  // Negative projection means the boids are closing in on each other
+                  if (velocityDifferenceProjectedOnNormal <= 0) // equal to zero possibly redundant? if zero, bounce force is still just zero
+                  {
+                    let bounceForce = 2*velocityDifferenceProjectedOnNormal; 
                     this.velocity.sub(normal.copy().mult(bounceForce));
                     other.velocity.add(normal.copy().mult(bounceForce));
                   }
+
                   // Stops the penguins from bumping into each other
                   let overlap = collisionDistance - d;
                   this.position.add(normal.copy().mult(overlap / 2));
                   other.position.add(normal.copy().mult(-overlap / 2));
                 }
-               
-             
           }
       }
   }
