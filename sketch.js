@@ -8,14 +8,15 @@ function preload()
   {
     let boid = new Boid();
 
-        boid.loadFrames('north', 'TenderBud/walk_N', 4);
-        boid.loadFrames('south', 'TenderBud/walk_S', 4);
-        boid.loadFrames('east', 'TenderBud/walk_E', 4);
-        boid.loadFrames('west', 'TenderBud/walk_W', 4);
-        boid.loadFrames('northeast', 'TenderBud/walk_NE', 4);
-        boid.loadFrames('southeast', 'TenderBud/walk_SE', 4);
-        boid.loadFrames('southwest', 'TenderBud/walk_SW', 4);
-        boid.loadFrames('northwest', 'TenderBud/walk_NW', 4);
+    boid.loadFrames('north', 'TenderBud/walk_N', 4);
+    boid.loadFrames('south', 'TenderBud/walk_S', 4);
+    boid.loadFrames('east', 'TenderBud/walk_E', 4);
+    boid.loadFrames('west', 'TenderBud/walk_W', 4);
+    boid.loadFrames('northeast', 'TenderBud/walk_NE', 4);
+    boid.loadFrames('southeast', 'TenderBud/walk_SE', 4);
+    boid.loadFrames('southwest', 'TenderBud/walk_SW', 4);
+    boid.loadFrames('northwest', 'TenderBud/walk_NW', 4);
+    
     flock.push(boid);
   }
 }
